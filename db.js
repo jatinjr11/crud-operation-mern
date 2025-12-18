@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-
-// const mongoDBURL = 'mongodb://127.0.0.1:27017/firstdb';
-const mongoDBURL = "mongodb+srv://helloworld:QWERTY123456@cluster0.9od9uxl.mongodb.net/"
+require("dotenv").config();
+// const MONGODB_URL_LOCAL = process.env.MONGODB_URL_LOCAL;
+const mongoDBURL = process.env.DB_URL;
 
 const connectDB = async () => {
     try{
