@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+
 const personSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -31,7 +32,7 @@ const personSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        required: true
+        required: true,
     },
     password: {
         type: String,
@@ -42,34 +43,33 @@ const personSchema = new mongoose.Schema({
 personSchema.pre('save', async function (next) {
     const person = this;
 
-    // hash the password only if it has been modified (or it new)
+    // Hash the password only if it has been modified or is new
     if (!person.isModified('password')) return next();
 
     try {
-
         // hash password generation
         const salt = await bcrypt.genSalt(10);
 
         // hash password
         const hashedPassword = await bcrypt.hash(person.password, salt);
 
-        // override the plain password with the hashed password
+        // override the plain password with the hashed one
         person.password = hashedPassword;
         next();
     } catch (err) {
-        return console.log("error: ", err)
+        // return next();
     }
 });
 
-personSchema.methods.comparePassword = async function (candidatePassword) {
+personSchema.methods.comparePassword = async function(candidatePassword){
     try {
+        // Use bcrypt to compare the candidate password the hashed password
         const isMatch = await bcrypt.compare(candidatePassword, this.password);
         return isMatch;
     } catch (err) {
         throw err;
     }
 }
-
 
 const Person = mongoose.model('Person', personSchema);
 module.exports = Person;
